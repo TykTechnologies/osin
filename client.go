@@ -13,6 +13,9 @@ type Client interface {
 
 	// Data to be passed to storage. Not used by the library.
 	GetUserData() interface{}
+
+	// Data to be passed to storage. Not used by the library.
+	GetPolicyID() string
 }
 
 // ClientSecretMatcher is an optional interface clients can implement
@@ -57,4 +60,9 @@ func (d *DefaultClient) CopyFrom(client Client) {
 	d.Secret = client.GetSecret()
 	d.RedirectUri = client.GetRedirectUri()
 	d.UserData = client.GetUserData()
+}
+
+// Data to be passed to storage. Not used by the library.
+func (d *DefaultClient) GetPolicyID() string {
+	return ""
 }

@@ -3,7 +3,7 @@ package osin
 import (
 	"encoding/base64"
 
-	"github.com/pborman/uuid"
+	"github.com/lonelycode/go-uuid/uuid"
 )
 
 // AuthorizeTokenGenDefault is the default authorization token generator

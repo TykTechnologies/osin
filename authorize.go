@@ -1,6 +1,7 @@
 package osin
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -52,7 +53,7 @@ type AuthorizeRequest struct {
 // Authorization data
 type AuthorizeData struct {
 	// Client information
-	Client Client
+	Client Client `json:",omitempty"`
 
 	// Authorization code
 	Code string
@@ -73,12 +74,30 @@ type AuthorizeData struct {
 	CreatedAt time.Time
 
 	// Data to be passed to storage. Not used by the library.
-	UserData interface{}
+	UserData interface{} `json:",omitempty"`
 
 	// Optional code_challenge as described in rfc7636
 	CodeChallenge string
 	// Optional code_challenge_method as described in rfc7636
 	CodeChallengeMethod string
+}
+
+type authorizeData AuthorizeData
+
+func (c *AuthorizeData) UnmarshalJSON(b []byte) error {
+	newAuthData := authorizeData{}
+	newAuthData.Client = new(DefaultClient)
+	// var code, scope, redirect, state string
+	// var expires int32
+	// var createdAt time.Time
+	// var userData interface{}
+	var err error
+
+	if err = json.Unmarshal(b, &newAuthData); err == nil {
+		*c = AuthorizeData(newAuthData)
+		return nil
+	}
+	return nil
 }
 
 // IsExpired is true if authorization expired
@@ -153,7 +172,7 @@ func (s *Server) HandleAuthorizeRequest(w *Response, r *http.Request) *Authorize
 		w.InternalError = err
 		return nil
 	} else {
-		ret.RedirectUri =  realRedirectUri
+		ret.RedirectUri = realRedirectUri
 	}
 
 	w.SetRedirect(ret.RedirectUri)
