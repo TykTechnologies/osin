@@ -88,7 +88,7 @@ type AccessData struct {
 	CreatedAt time.Time
 
 	// Data to be passed to storage. Not used by the library.
-	UserData interface{}
+	UserData interface{} `json:",omitempty"`
 }
 
 type accessData AccessData
